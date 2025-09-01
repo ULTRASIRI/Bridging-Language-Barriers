@@ -32,11 +32,11 @@ The system captures live speech from video conferencing platforms, processes it 
 ## 🔹 System Flow (Mermaid Diagram)
 
 ```mermaid
-flowchart LR
-    A[🎤 Microphone / Meeting Audio] --> B[📝 Speech-to-Text (STT)]
-    B --> C[🌐 Translation Engine]
-    C --> D[💬 Caption Display]
-    C --> E[🔊 TTS Output]
+graph TD
+A[Microphone / Meeting Audio] --> B[Speech-to-Text (STT)]
+B --> C[Translation Engine]
+C --> D[Caption Display]
+C --> E[TTS Output]
 
 ---
 
