@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridging Language Barriers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #121212;
+        }
+        canvas {
+            display: block;
+        }
+        .text-overlay {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #F8F3EC;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .text-overlay h1 {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="text-overlay">
+        <h1>Bridging Language Barriers</h1>
+    </div>
+
+    <canvas id="illustrationCanvas"></canvas>
+
+    <script>
+        let camera, scene, renderer, controls;
+        let centralOrb, waveformObjects = [];
+        let person1, computer1, person2, computer2;
+        let materialWave1, materialWave2;
+        let lastTimestamp = 0;
+        
+        const waveformCount = 20;
+        const waveformSpeed = 0.0005;
+        let lastWaveTime = 0;
+
+        window.onload = function () {
+            init();
+            animate(0);
+        };
+
+        function init() {
+            // --- Scene Setup ---
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x121212);
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.getElementById('illustrationCanvas') });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // --- Lighting ---
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // --- Materials and Colors ---
+            const personLeftColor = 0x4B698C;
+            const personRightColor = 0x60A560;
+            const skinColor = 0xFFCFB2;
+            const deskColor = 0x6F4F28;
+            const mainMaterial = new THREE.MeshStandardMaterial({ color: 0xF0F0E6, flatShading: true });
+            const secondaryMaterial = new THREE.MeshStandardMaterial({ color: 0x444444, flatShading: true });
+            const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x00A86B, flatShading: true });
+            const waveColor1 = 0x9B5DE5;
+            const waveColor2 = 0x00A0D3;
+
+            const materialBlue = new THREE.MeshLambertMaterial({ color: personLeftColor });
+            const materialGreen = new THREE.MeshLambertMaterial({ color: personRightColor });
+            const materialSkin = new THREE.MeshLambertMaterial({ color: skinColor });
+            const materialDesk = new THREE.MeshLambertMaterial({ color: deskColor });
+            materialWave1 = new THREE.MeshLambertMaterial({ color: waveColor1 });
+            materialWave2 = new THREE.MeshLambertMaterial({ color: waveColor2 });
+
+            // --- Central Orb (non-animated) ---
+            const orbGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+            const orbMaterial = new THREE.MeshStandardMaterial({ color: 0x00A0D3 });
+            centralOrb = new THREE.Mesh(orbGeometry, orbMaterial);
+            centralOrb.position.set(0, 1.5, 0);
+            scene.add(centralOrb);
+            
+            // --- Waveform Animation ---
+            const waveformGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            for (let i = 0; i < waveformCount; i++) {
+                const object = new THREE.Mesh(waveformGeometry, materialWave1);
+                object.visible = false;
+                waveformObjects.push(object);
+                scene.add(object);
+            }
+
+            // Person and Computer creation helper function
+            function createPersonAndComputer(xPos, personMaterial) {
+                const personGroup = new THREE.Group();
+                const personBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.5, 0.7), personMaterial);
+                const personHead = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), materialSkin);
+                personHead.position.y = 1;
+                personBody.add(personHead);
+                personGroup.add(personBody);
+
+                // Computer Group
+                const computerGroup = new THREE.Group();
+                
+                // Monitor
+                const monitorBodyGeometry = new THREE.BoxGeometry(1.2, 1.2, 0.8);
+                const monitorBody = new THREE.Mesh(monitorBodyGeometry, mainMaterial);
+                monitorBody.position.y = 1.25;
+                computerGroup.add(monitorBody);
+
+                // Screen
+                const screenGeometry = new THREE.BoxGeometry(1.0, 0.8, 0.05);
+                const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+                screen.position.set(0, 1.25, 0.4);
+                computerGroup.add(screen);
+
+                // PC Tower / Base
+                const baseGeometry = new THREE.BoxGeometry(1.8, 0.5, 1.4);
+                const base = new THREE.Mesh(baseGeometry, mainMaterial);
+                base.position.y = 0.5;
+                computerGroup.add(base);
+
+                // Floppy drive detail
+                const driveGeometry = new THREE.BoxGeometry(0.8, 0.1, 0.1);
+                const drive = new THREE.Mesh(driveGeometry, secondaryMaterial);
+                drive.position.set(0, 0.5, 0.7);
+                computerGroup.add(drive);
+                
+                // Position and rotate
+                computerGroup.position.x = xPos;
+                computerGroup.rotation.y = xPos > 0 ? -Math.PI / 2 : Math.PI / 2;
+
+                scene.add(personGroup);
+                scene.add(computerGroup);
+                
+                return { person: personGroup, computer: computerGroup };
+            }
+
+            // Create Left and Right Person with Computers
+            const { person: p1, computer: c1 } = createPersonAndComputer(-6, materialBlue);
+            const { person: p2, computer: c2 } = createPersonAndComputer(6, materialGreen);
+            
+            person1 = p1;
+            computer1 = c1;
+            person2 = p2;
+            computer2 = c2;
+
+            // Adjust person and computer coordinates as requested
+            person1.position.set(-8, 0.5, 0);
+            person2.position.set(8, 0.5, 0);
+            computer1.position.set(6, 0, 0);
+            computer2.position.set(-6, 0, 0);
+
+            // Desk
+            const desk = new THREE.Mesh(new THREE.BoxGeometry(20, 0.5, 5), materialDesk);
+            desk.position.y = -0.25;
+            scene.add(desk);
+
+            // --- Camera and Controls ---
+            camera.position.set(0, 5.5, 12);
+            camera.lookAt(0, 1.5, 0);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate(timestamp) {
+            requestAnimationFrame(animate);
+
+            if (lastTimestamp === 0) lastTimestamp = timestamp;
+            const deltaTime = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+
+            if (controls) controls.update();
+            
+            if (waveformObjects.length > 0) {
+                // Use a time-based threshold for releasing new waves
+                if (timestamp - lastWaveTime > 200) {
+                    lastWaveTime = timestamp;
+                    const object = waveformObjects.find(o => !o.visible);
+                    if (object) {
+                        object.visible = true;
+                        object.userData.phase = 0;
+                        object.userData.segment = 0;
+                    }
+                }
+
+                waveformObjects.forEach(object => {
+                    if (object.visible) {
+                        let startPos, endPos;
+                        
+                        switch(object.userData.segment) {
+                            case 0:
+                                startPos = person1.position;
+                                endPos = computer1.position;
+                                break;
+                            case 1:
+                                startPos = computer1.position;
+                                endPos = centralOrb.position;
+                                break;
+                            case 2:
+                                startPos = centralOrb.position;
+                                endPos = computer2.position;
+                                object.material = object.material === materialWave2 ? object.material : new THREE.MeshLambertMaterial({ color: 0x00A0D3 });
+                                break;
+                            case 3:
+                                startPos = computer2.position;
+                                endPos = person2.position;
+                                break;
+                        }
+
+                        object.userData.phase += waveformSpeed * deltaTime;
+                        const t = Math.min(object.userData.phase, 1);
+                        const smoothT = t * t * (3 - 2 * t);
+                        
+                        object.position.lerpVectors(startPos, endPos, smoothT);
+                        
+                        if (t >= 1) {
+                            object.userData.segment++;
+                            object.userData.phase = 0;
+                            if (object.userData.segment > 3) {
+                                object.visible = false;
+                                object.userData.segment = 0;
+                                object.material = new THREE.MeshLambertMaterial({ color: 0x9B5DE5 });
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+    </script>
+
+</body>
+</html>
+
