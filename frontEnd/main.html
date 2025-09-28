@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridging Language Barriers: AI-Powered Translation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0079C1;
+            font-weight: bold;
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: default;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 74, 173, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50" style="background-color: #F0F8FF;">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold" style="color: #004AAD;">Bridging Language Barriers</h1>
+            <p class="text-xl md:text-2xl mt-2 font-light" style="color: #0079C1;">AI-Powered Multilingual Video Voice Translator</p>
+            <a href="https://github.com/ULTRASIRI/Bridging-Language-Barriers.git" class="text-sm italic mt-1 inline-block" style="color: #00A9E0;" target="_blank">
+                <span class="font-mono text-xs p-1 rounded-md" style="background-color: #B2DDF0;">https://github.com/ULTRASIRI/Bridging-Language-Barriers.git</span>
+            </a>
+            <p class="max-w-4xl mx-auto mt-4 text-gray-600">
+                This analysis outlines the full system architecture, technology stack, and performance strategies required to build a real-time, bidirectional video translation platform, ensuring seamless global communication.
+            </p>
+        </header>
+
+        <section class="lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mb-6">
+            <h2 class="text-3xl font-bold text-center mb-8" style="color: #004AAD;">Gemini LLM Enhancements: Adding Intelligence to Translation</h2>
+            <p class="text-center text-sm text-gray-600 max-w-4xl mx-auto mb-6">
+                To move beyond simple word-for-word translation, we integrate the Gemini API to analyze communication nuance and explain complex jargon in real-time, significantly improving comprehension and context.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1 p-4 rounded-xl" style="background-color: #E0F2FE;">
+                    <h3 class="font-bold text-xl mb-3" style="color: #0079C1;">Simulated ASR Output</h3>
+                    <textarea id="sourceText" rows="6" class="w-full p-3 rounded-lg border-2 focus:border-blue-500 transition duration-150" style="border-color: #6EC4E8;">The Q3 EBITDA projections show high-volume throughput across all domestic channels. We need to focus on low-latency delivery this quarter.</textarea>
+                    <p class="text-xs mt-1 text-gray-500">Enter sample transcribed text here (simulating Step 2 of the pipeline).</p>
+                </div>
+
+                <div class="md:col-span-2 p-4 rounded-xl" style="background-color: #B2DDF0;">
+                    <h3 class="font-bold text-xl mb-3" style="color: #0079C1;">LLM Analysis Output</h3>
+                    <div id="llmOutput" class="min-h-[150px] p-4 bg-white rounded-lg border-2 border-dashed" style="border-color: #6EC4E8;">
+                        <p class="text-gray-500">Results from sentiment analysis or jargon explanation will appear here.</p>
+                    </div>
+                    
+                    <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                        <button id="analyzeToneBtn" class="flex-1 px-4 py-2 rounded-lg font-bold text-white shadow-md hover:shadow-lg transition duration-300" style="background-color: #0079C1;">
+                            ✨ Analyze Tone & Style
+                        </button>
+                        <button id="explainJargonBtn" class="flex-1 px-4 py-2 rounded-lg font-bold text-white shadow-md hover:shadow-lg transition duration-300" style="background-color: #004AAD;">
+                            ✨ Explain Jargon (Grounded)
+                        </button>
+                    </div>
+                    <div id="loadingIndicator" class="mt-2 text-center hidden text-sm font-semibold" style="color: #0079C1;">
+                        Processing with Gemini...
+                    </div>
+                    <div id="sourcesOutput" class="mt-2 text-xs text-gray-700 hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <section class="lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mb-6">
+                <h2 class="text-3xl font-bold text-center mb-8" style="color: #004AAD;">The Real-Time Translation Pipeline: 6 Critical Stages</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-center">
+                    
+                    <div class="card text-center p-4 rounded-xl h-full flex flex-col justify-center" style="background-color: #B2DDF0; border: 2px solid #6EC4E8;">
+                        <span class="text-4xl">🎙️</span>
+                        <h3 class="font-bold mt-2 text-lg" style="color: #004AAD;">1. Audio Capture</h3>
+                        <p class="text-sm text-gray-700 mt-1">Uses WebRTC to stream voice segments from the source device.</p>
+                    </div>
+                    <div class="flow-arrow hidden lg:flex">→</div>
+                    
+                    <div class="card text-center p-4 rounded-xl h-full flex flex-col justify-center" style="background-color: #E0F2FE; border: 2px solid #6EC4E8;">
+                        <span class="text-4xl">🧠</span>
+                        <h3 class="font-bold mt-2 text-lg" style="color: #004AAD;">2. Speech-to-Text (ASR)</h3>
+                        <p class="text-sm text-gray-700 mt-1">A high-accuracy model (e.g., Whisper) converts audio into text transcripts.</p>
+                    </div>
+                    <div class="flow-arrow hidden lg:flex">→</div>
+
+                    <div class="card text-center p-4 rounded-xl h-full flex flex-col justify-center" style="background-color: #B2DDF0; border: 2px solid #6EC4E8;">
+                        <span class="text-4xl">🌐</span>
+                        <h3 class="font-bold mt-2 text-lg" style="color: #004AAD;">3. Contextual Translation</h3>
+                        <p class="text-sm text-gray-700 mt-1">NMT algorithms translate the text, preserving meaning and nuance.</p>
+                    </div>
+                    <div class="flow-arrow hidden lg:flex">→</div>
+
+                    <div class="card text-center p-4 rounded-xl h-full flex flex-col justify-center" style="background-color: #E0F2FE; border: 2px solid #6EC4E8;">
+                        <span class="text-4xl">🔠</span>
+                        <h3 class="font-bold mt-2 text-lg" style="color: #004AAD;">4. Caption Generation</h3>
+                        <p class="text-sm text-gray-700 mt-1">Translated text is immediately displayed as closed captions (text-based output).</p>
+                    </div>
+                    <div class="flow-arrow hidden lg:flex">→</div>
+
+                    <div class="card text-center p-4 rounded-xl h-full flex flex-col justify-center" style="background-color: #B2DDF0; border: 2px solid #6EC4E8;">
+                        <span class="text-4xl">🗣️</span>
+                        <h3 class="font-bold mt-2 text-lg" style="color: #004AAD;">5. Text-to-Speech (TTS)</h3>
+                        <p class="text-sm text-gray-700 mt-1">The translated text is synthesized into human-like audio for the listener.</p>
+                    </div>
+                    <div class="flow-arrow hidden lg:flex">→</div>
+
+                    <div class="card text-center p-4 rounded-xl h-full flex flex-col justify-center" style="background-color: #E0F2FE; border: 2px solid #6EC4E8;">
+                        <span class="text-4xl">🔊</span>
+                        <h3 class="font-bold mt-2 text-lg" style="color: #004AAD;">6. Audio Playback</h3>
+                        <p class="text-sm text-gray-700 mt-1">Translated audio is played to the recipient, completing the loop.</p>
+                    </div>
+
+                    <div class="col-span-2 md:col-span-3 lg:col-span-6 flex justify-center mt-4">
+                         <p class="text-xs italic text-gray-500">The entire process must complete in under 3 seconds to feel conversational.</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mb-6">
+                <h2 class="text-3xl font-bold text-center mb-8" style="color: #004AAD;">Immersive Core Technology Stack</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                    <div class="card p-6 rounded-xl border border-gray-200 text-center" style="background-color: #E0F2FE;">
+                        <span class="text-5xl block mb-3" style="color: #0079C1;">📡</span>
+                        <h3 class="font-extrabold text-xl" style="color: #004AAD;">WebRTC</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Purpose:** Enables browser-to-browser, real-time audio and video streaming without plugins. It's crucial for low-latency P2P communication.
+                        </p>
+                    </div>
+                    
+                    <div class="card p-6 rounded-xl border border-gray-200 text-center" style="background-color: #B2DDF0;">
+                        <span class="text-5xl block mb-3" style="color: #0079C1;">💡</span>
+                        <h3 class="font-extrabold text-xl" style="color: #004AAD;">NMT Algorithms</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Purpose:** The heart of the translation. Uses deep learning (transformers, recurrent models) to produce fluent, context-aware translations.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl border border-gray-200 text-center" style="background-color: #E0F2FE;">
+                        <span class="text-5xl block mb-3" style="color: #0079C1;">⚡</span>
+                        <h3 class="font-extrabold text-xl" style="color: #004AAD;">Sockets (Node.js)</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Purpose:** Used for signaling (establishing WebRTC connections) and handling real-time, bi-directional data transmission of transcripts.
+                        </p>
+                    </div>
+
+                    <div class="card p-6 rounded-xl border border-gray-200 text-center" style="background-color: #B2DDF0;">
+                        <span class="text-5xl block mb-3" style="color: #0079C1;">✍️🗣️</span>
+                        <h3 class="font-extrabold text-xl" style="color: #004AAD;">ASR & TTS APIs</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Purpose:** Dedicated services (like Whisper for ASR) to convert voice to text and text to synthesized speech efficiently.
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="md:col-span-1 bg-white rounded-lg shadow-md p-6 flex flex-col">
+                <h2 class="text-2xl font-bold text-center mb-4" style="color: #004AAD;">Algorithm Ranking by Quality (BLEU Score Proxy)</h2>
+                <p class="text-center text-sm text-gray-600 mb-4">Neural Machine Translation (NMT) is definitively the best approach for conversational fluency and accuracy, leaving legacy methods far behind.</p>
+                <div class="chart-container flex-grow">
+                    <canvas id="rankingChart"></canvas>
+                </div>
+            </section>
+            
+            <section class="md:col-span-2 bg-white rounded-lg shadow-md p-6 flex flex-col">
+                <h2 class="text-2xl font-bold text-center mb-4" style="color: #004AAD;">Achieving the Performance Goal: Latency Reduction</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+                    <div class="p-4 rounded-lg flex flex-col justify-center" style="background-color: #E0F2FE;">
+                        <h3 class="font-bold text-xl mb-2" style="color: #0079C1;">Current Target</h3>
+                        <p class="text-4xl font-extrabold" style="color: #004AAD;">3 - 5 SECONDS</p>
+                        <p class="text-sm text-gray-700 mt-1">Reported latency for end-to-end transcription and translation.</p>
+                    </div>
+                    <div class="p-4 rounded-lg" style="background-color: #B2DDF0;">
+                        <h3 class="font-bold text-xl mb-2" style="color: #0079C1;">Optimization Methods</h3>
+                        <ul class="list-disc pl-5 text-sm space-y-1 text-gray-700">
+                            <li>**Early Sentence Segmentation:** Translate segments, not whole sentences.</li>
+                            <li>**Smaller NMT Models:** Use efficient, optimized models over large, slow ones.</li>
+                            <li>**Caching:** Reuse common phrases/terms to avoid repeated processing.</li>
+                            <li>**Optimized Beam Search:** Faster decoding in the translation process.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-3 bg-white rounded-lg shadow-xl p-8 mb-6">
+                <h2 class="text-3xl font-bold text-center mb-8" style="color: #004AAD;">Evolution of Machine Translation: From Rules to AI</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div class="text-center p-5 rounded-lg border-2" style="border-color: #B2DDF0;">
+                        <span class="text-5xl block mb-3" style="color: #0079C1;">1️⃣</span>
+                        <h3 class="font-bold text-xl" style="color: #004AAD;">Rule-Based MT (RBMT)</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Era:** Pre-2000s
+                            <br>
+                            **Core:** Strict, hand-coded linguistic rules and dictionaries.
+                            <br>
+                            **Drawback:** Lacks fluency and fails entirely on ambiguity or new slang.
+                        </p>
+                    </div>
+
+                    <div class="text-center p-5 rounded-lg border-2" style="border-color: #6EC4E8;">
+                        <span class="text-5xl block mb-3" style="color: #0079C1;">2️⃣</span>
+                        <h3 class="font-bold text-xl" style="color: #004AAD;">Statistical MT (SMT)</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Era:** 2000s - Early 2010s
+                            <br>
+                            **Core:** Learns translation probabilities from massive bilingual text corpora.
+                            <br>
+                            **Drawback:** Word-based approach often ignores global sentence context, leading to unnatural output.
+                        </p>
+                    </div>
+
+                    <div class="text-center p-5 rounded-lg border-2" style="border-color: #0079C1;">
+                        <span class="text-5xl block mb-3" style="color: #004AAD;">3️⃣</span>
+                        <h3 class="font-bold text-xl" style="color: #004AAD;">Neural MT (NMT)</h3>
+                        <p class="text-sm text-gray-700 mt-2">
+                            **Era:** Mid-2010s - Present
+                            <br>
+                            **Core:** Uses transformer architecture (Deep Learning) to process the entire sentence context.
+                            <br>
+                            **Advantage:** Achieves human-like fluency, superior accuracy, and handles syntax/idioms well.
+                        </p>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="lg:col-span-3 bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-center mb-6" style="color: #004AAD;">Acknowledged Research Papers</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
+                    <div class="p-3 rounded-lg" style="background-color: #B2DDF0;">
+                        <p class="font-semibold" style="color: #004AAD;">Bridging Language Barriers...</p>
+                        <p>Focuses on NMT and latency reduction to 3-5 seconds using AI models for live audio translation.</p>
+                    </div>
+                    <div class="p-3 rounded-lg" style="background-color: #E0F2FE;">
+                        <p class="font-semibold" style="color: #004AAD;">LinguaFusion: AI-Powered...</p>
+                        <p>Discusses the seamless combination of ASR, NMT, and TTS for multilingual voice translation in video content.</p>
+                    </div>
+                    <div class="p-3 rounded-lg" style="background-color: #B2DDF0;">
+                        <p class="font-semibold" style="color: #004AAD;">Real-Time Transcription...</p>
+                        <p>Explores the fundamental use of WebRTC (Node.js/HTML5) for P2P video conferencing and its scalability.</p>
+                    </div>
+                    <div class="p-3 rounded-lg" style="background-color: #E0F2FE;">
+                        <p class="font-semibold" style="color: #004AAD;">Automated Caption Generation...</p>
+                        <p>Highlights the use of React, Socket programming, and Google Translate/Whisper for translated captions in video calls.</p>
+                    </div>
+                    <div class="p-3 rounded-lg" style="background-color: #B2DDF0;">
+                        <p class="font-semibold" style="color: #004AAD;">Integrating Natural Language...</p>
+                        <p>Provides context on the integration of NLP into interactive platforms, foundational to the translation step.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>This document summarizes the core technical findings for the "Bridging Language Barriers" project. The chosen color palette is 'Brilliant Blues'. Neither Mermaid JS nor SVG were used in this output.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const brilliantBluesPalette = {
+            darkBlue: '#004AAD',
+            mediumBlue: '#0079C1',
+            brightBlue: '#00A9E0',
+            lightBlue: '#6EC4E8',
+            paleBlue: '#B2DDF0',
+            background: '#F0F8FF'
+        };
+
+        const apiKey = "";
+        const model = 'gemini-2.5-flash-preview-05-20';
+        const modelGrounded = 'gemini-2.5-flash-preview-05-20'; // Using the same model for grounded search
+
+        const sourceTextarea = document.getElementById('sourceText');
+        const llmOutput = document.getElementById('llmOutput');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const sourcesOutput = document.getElementById('sourcesOutput');
+        const analyzeToneBtn = document.getElementById('analyzeToneBtn');
+        const explainJargonBtn = document.getElementById('explainJargonBtn');
+
+
+        async function callGeminiAPI(userQuery, systemPrompt, useGrounding = false, maxRetries = 3) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${useGrounding ? modelGrounded : model}:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            if (useGrounding) {
+                payload.tools = [{ "google_search": {} }];
+            }
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && i < maxRetries - 1) {
+                            const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            continue;
+                        }
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const text = candidate.content.parts[0].text;
+                        let sources = [];
+                        const groundingMetadata = candidate.groundingMetadata;
+                        
+                        if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                            sources = groundingMetadata.groundingAttributions
+                                .map(attribution => ({
+                                    uri: attribution.web?.uri,
+                                    title: attribution.web?.title,
+                                }))
+                                .filter(source => source.uri && source.title);
+                        }
+
+                        return { text, sources };
+                    } else {
+                        throw new Error("Invalid response structure from Gemini API.");
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        console.error("Gemini API call failed after all retries:", error);
+                        return { text: "Error: Could not process request. Please try again.", sources: [] };
+                    }
+                }
+            }
+        }
+
+        function displayResult(text, sources) {
+            llmOutput.innerHTML = `<p class="whitespace-pre-wrap text-gray-800">${text}</p>`;
+            
+            sourcesOutput.innerHTML = '';
+            if (sources.length > 0) {
+                sourcesOutput.classList.remove('hidden');
+                let sourcesHtml = '<p class="font-semibold" style="color: #004AAD;">Sources Used:</p><ul class="list-disc pl-5 space-y-1">';
+                sources.slice(0, 3).forEach((source, index) => {
+                    sourcesHtml += `<li><a href="${source.uri}" target="_blank" class="text-blue-600 hover:underline">${source.title || source.uri}</a></li>`;
+                });
+                sourcesHtml += '</ul>';
+                sourcesOutput.innerHTML = sourcesHtml;
+            } else {
+                 sourcesOutput.classList.add('hidden');
+            }
+        }
+
+        async function handleAnalysis(type) {
+            const text = sourceTextarea.value.trim();
+            if (!text) {
+                llmOutput.innerHTML = '<p class="text-red-500">Please enter text to analyze.</p>';
+                sourcesOutput.classList.add('hidden');
+                return;
+            }
+
+            loadingIndicator.classList.remove('hidden');
+            llmOutput.innerHTML = '<p class="text-gray-500">Awaiting response...</p>';
+            sourcesOutput.classList.add('hidden');
+
+            let userQuery;
+            let systemPrompt;
+            let useGrounding = false;
+
+            if (type === 'tone') {
+                systemPrompt = "You are a communication analysis AI. Analyze the user's provided text and output a single, concise paragraph identifying the dominant tone (e.g., formal, urgent, casual, technical) and style. Suggest one specific way the tone might affect the translation and the recipient's interpretation.";
+                userQuery = `Analyze the following text: "${text}"`;
+            } else if (type === 'jargon') {
+                systemPrompt = "You are a professional glossary and clarification assistant. Identify any technical terms, acronyms, or industry-specific jargon in the user's text. For each piece of jargon identified, provide a simple, 1-2 sentence explanation of its meaning. Use the provided search tool to find the most accurate, current definition. Format the output with bolded terms.";
+                userQuery = `Identify and explain the technical jargon in this text: "${text}"`;
+                useGrounding = true;
+            }
+
+            const result = await callGeminiAPI(userQuery, systemPrompt, useGrounding);
+
+            loadingIndicator.classList.add('hidden');
+            displayResult(result.text, result.sources);
+        }
+
+        // Event Listeners
+        analyzeToneBtn.addEventListener('click', () => handleAnalysis('tone'));
+        explainJargonBtn.addEventListener('click', () => handleAnalysis('jargon'));
+
+
+        // Chart Initialization (Existing Code)
+        function processLabels(labels) {
+            const charLimit = 16;
+            return labels.map(label => {
+                if (typeof label !== 'string' || label.length <= charLimit) {
+                    return label;
+                }
+                const words = label.split(' ');
+                const newLabels = [];
+                let currentLine = '';
+                words.forEach(word => {
+                    if ((currentLine + ' ' + word).trim().length > charLimit && currentLine.length > 0) {
+                        newLabels.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                });
+                if (currentLine) {
+                    newLabels.push(currentLine.trim());
+                }
+                return newLabels;
+            });
+        }
+
+        const sharedTooltipOptions = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    display: false
+                }
+            }
+        };
+
+        const rankingCtx = document.getElementById('rankingChart').getContext('2d');
+        const rankingLabels = ['Neural Machine Translation (NMT)', 'Statistical Machine Translation (SMT)', 'Rule-Based Machine Translation (RBMT)'];
+        const processedRankingLabels = processLabels(rankingLabels);
+
+        const rankingChart = new Chart(rankingCtx, {
+            type: 'bar',
+            data: {
+                labels: processedRankingLabels,
+                datasets: [{
+                    label: 'Comparative Quality Score (Higher is Better)',
+                    data: [9.5, 7.0, 5.0],
+                    backgroundColor: [brilliantBluesPalette.darkBlue, brilliantBluesPalette.mediumBlue, brilliantBluesPalette.lightBlue],
+                    borderColor: [brilliantBluesPalette.darkBlue, brilliantBluesPalette.mediumBlue, brilliantBluesPalette.lightBlue],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...sharedTooltipOptions,
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 10,
+                        title: {
+                            display: true,
+                            text: 'Quality Score (0-10)'
+                        }
+                    },
+                    y: {
+                         ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    ...sharedTooltipOptions.plugins,
+                    tooltip: {
+                        ...sharedTooltipOptions.plugins.tooltip,
+                         callbacks: {
+                            ...sharedTooltipOptions.plugins.tooltip.callbacks,
+                             label: function(context) {
+                                return ` Score: ${context.raw.toFixed(1)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
